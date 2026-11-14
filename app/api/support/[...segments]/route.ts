@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const API = (process.env.VYRA_API_URL || "https://vyra-api-9pxl.onrender.com").replace(/\\/+$/, "");
+const API = (process.env.VYRA_API_URL || "https://vyra-api-9pxl.onrender.com").replace(/\/+$/, "");
 
 async function forward(request: NextRequest, segments: string[], method: string) {
   const jar = await cookies();
