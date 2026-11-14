@@ -7,10 +7,10 @@ const ADMIN = (process.env.ADMIN_EMAIL || "alza69191@gmail.com").trim().toLowerC
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
-    if (String(email || "").trim().toLowerCase() !== ADMIN) {
-      return NextResponse.json({ error: "غير مصرح لهذا الحساب." }, { status: 403 });
+    if (String(email || "").trim().toLowerCase() !== ADMIN || typeof password !== "string") {
+      return NextResponse.json({ error: "بيانات الدخول غير صحيحة." }, { status: 401 });
     }
-    const upstream = await fetch(`${API}/api/auth/login`, {
+    const upstream = await fetch(`${API}/api/auth/admin-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: ADMIN, password }),
