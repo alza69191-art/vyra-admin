@@ -87,7 +87,7 @@ export default function Home() {
   }
 
   if(!logged) return <main className="login-wrap"><form className="login-card" onSubmit={login}>
-    <div className="brand"><div className="brand-mark">V</div><span>VYRA <b>ADMIN</b></span></div>
+    <div className="brand"><img className="brand-logo" src="/brand/vyra-logo.svg" alt="VYRA" /><span>VYRA <b>ADMIN</b></span></div>
     <h1>بوابة الإدارة</h1><p className="muted">دخول إداري مخصص، والتحقق يتم من خادم VYRA.</p>
     <div className="field"><label>البريد الإداري</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="username" required /></div>
     <div className="field"><label>كلمة المرور</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} autoComplete="current-password" required /></div>
@@ -99,13 +99,13 @@ export default function Home() {
   const title=menu.find(x=>x.id===tab)?.label||"نظرة عامة";
   return <div className="shell">
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark">V</div><span>VYRA ADMIN</span></div>
+      <div className="brand"><img className="brand-logo" src="/brand/vyra-logo.svg" alt="VYRA" /><span>VYRA ADMIN</span></div>
       <div><div className="side-label">مساحة الإدارة</div><nav className="nav">{menu.map(item=>{const Icon=item.icon;return <button key={item.id} className={tab===item.id?"active":""} onClick={()=>changeTab(item.id)}><Icon size={18}/><span>{item.label}</span></button>})}</nav></div>
       <div><div className="side-label">النظام</div><nav className="nav"><button onClick={()=>changeTab("security")}><Settings size={18}/><span>الإعدادات والأمان</span></button><button onClick={logout}><LogOut size={18}/><span>تسجيل الخروج</span></button></nav></div>
       <div className="side-foot">VYRA ADMIN · لوحة مستقلة<br/>صلاحيات مفروضة من الخادم</div>
     </aside>
     <main className="main">
-      <header className="topbar"><div className="topbar-title">{title}</div><div className="admin-chip"><span>مدير النظام</span><div className="avatar">A</div></div></header>
+      <header className="topbar"><div className="topbar-title">{title}</div><div className="admin-chip"><span className="admin-live"><i/> متصل</span><span>مدير النظام</span><div className="avatar">A</div></div></header>
       <section className="content">
         <div className="page-head"><div><h1>{tab==="overview"?"مركز التحكم والإشراف":title}</h1><div className="muted">إدارة VYRA ومتابعة العمليات من لوحة واحدة.</div></div><button className="small-btn" onClick={()=>loadTab()}><RefreshCw size={15}/> تحديث</button></div>
         {error&&<p className="error">{error}</p>}{notice&&<p className="success">{notice}</p>}
