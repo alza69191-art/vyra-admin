@@ -87,7 +87,7 @@ export default function Home() {
   async function removeItem(kind:"posts",item:Row){
     const reason=window.prompt("اكتب سبب الإزالة (5 أحرف على الأقل):");
     if(!reason||reason.trim().length<5)return;
-    try{await api(`/api/admin/${kind}/${item.id}`,"DELETE",{reason});await loadTab("content");setNotice("تمت الإزالة وتسجيل الإجراء.");}
+    try{await api(`/api/admin/${kind}/${item.id}`,"DELETE",{reason});await loadTab(tab==="reels"?"reels":"content");setNotice("تمت الإزالة وتسجيل الإجراء.");}
     catch(err:any){setError(err.message);}
   }
 
