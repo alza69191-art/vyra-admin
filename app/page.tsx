@@ -7,7 +7,6 @@ const menu = [
   { id:"support", label:"الدعم الفني", icon:MessageSquare },
   { id:"users", label:"إدارة الحسابات", icon:Users },
   { id:"content", label:"مراجعة المنشورات", icon:FileText },
-  { id:"messages", label:"مراجعة الرسائل", icon:MessageSquare },
   { id:"audit", label:"سجل الإجراءات", icon:ClipboardList },
   { id:"security", label:"الأمان", icon:Shield },
 ];
@@ -25,7 +24,6 @@ export default function Home() {
   const [tickets,setTickets]=useState<Row[]>([]);
   const [users,setUsers]=useState<Row[]>([]);
   const [posts,setPosts]=useState<Row[]>([]);
-  const [messages,setMessages]=useState<Row[]>([]);
   const [audit,setAudit]=useState<Row[]>([]);
   const [selectedTicket,setSelectedTicket]=useState<Row|null>(null);
   const [ticketMessages,setTicketMessages]=useState<Row[]>([]);
@@ -51,7 +49,6 @@ export default function Home() {
       if(id==="support") setTickets(await api("/api/support/tickets"));
       if(id==="users") setUsers(await api("/api/admin/users"));
       if(id==="content") setPosts(await api("/api/admin/posts"));
-      if(id==="messages") setMessages(await api("/api/admin/messages"));
       if(id==="audit") setAudit(await api("/api/admin/audit"));
     } catch(err:any){setError(err.message||"تعذر تحميل البيانات");}
     finally{setLoading(false);}
@@ -82,10 +79,10 @@ export default function Home() {
     try{await api(`/api/admin/users/${u.id}/status`,"PATCH",{is_active,reason});await loadTab("users");setNotice("تم تحديث حالة الحساب وتسجيل الإجراء.");}
     catch(err:any){setError(err.message);}
   }
-  async function removeItem(kind:"posts"|"messages",item:Row){
+  async function removeItem(kind:"posts",item:Row){
     const reason=window.prompt("اكتب سبب الإزالة (5 أحرف على الأقل):");
     if(!reason||reason.trim().length<5)return;
-    try{await api(`/api/admin/${kind}/${item.id}`,"DELETE",{reason});await loadTab(kind==="posts"?"content":"messages");setNotice("تمت الإزالة وتسجيل الإجراء.");}
+    try{await api(`/api/admin/${kind}/${item.id}`,"DELETE",{reason});await loadTab("content");setNotice("تمت الإزالة وتسجيل الإجراء.");}
     catch(err:any){setError(err.message);}
   }
 
@@ -121,7 +118,6 @@ export default function Home() {
         {selectedTicket&&<article className="panel"><h2>{selectedTicket.subject}</h2><p className="muted">رقم التذكرة: {selectedTicket.id}</p><div className="ticket-messages">{ticketMessages.map(m=><div className="notice" key={m.id}><b>{m.sender_role==="support"?"الدعم":"المستخدم"}</b><p>{m.message}</p><small>{String(m.created_at||"")}</small></div>)}</div><textarea className="reply-box" value={reply} onChange={e=>setReply(e.target.value)} placeholder="اكتب رد الدعم..." rows={4}/><button className="primary" onClick={sendReply}><Send size={16}/> إرسال الرد</button><button className="small-btn" onClick={()=>ticketStatus(selectedTicket,selectedTicket.status==="closed"?"open":"closed")}>{selectedTicket.status==="closed"?"إعادة فتح التذكرة":"إغلاق التذكرة"}</button></article>}</div>}
         {tab==="users"&&!loading&&<div className="table-wrap"><table className="table"><thead><tr><th>الاسم</th><th>البريد</th><th>تاريخ الإنشاء</th><th>الحالة</th><th>الإجراء</th></tr></thead><tbody>{users.map(u=><tr key={u.id}><td>{u.display_name||u.username||"—"}</td><td>{u.email}</td><td>{String(u.created_at||"").slice(0,10)}</td><td>{u.is_active?"نشط":"موقوف"}</td><td><button className="small-btn" onClick={()=>suspendUser(u,!u.is_active)}>{u.is_active?<><Ban size={14}/> إيقاف</>:<><CheckCircle2 size={14}/> تفعيل</>}</button></td></tr>)}</tbody></table></div>}
         {tab==="content"&&!loading&&<div className="table-wrap"><table className="table"><thead><tr><th>الكاتب</th><th>المحتوى</th><th>الظهور</th><th>الإجراء</th></tr></thead><tbody>{posts.map(p=><tr key={p.id}><td>{p.author_name}</td><td className="clip">{p.body||"وسائط"}</td><td>{p.visibility}</td><td><button className="small-btn danger-btn" onClick={()=>removeItem("posts",p)}><Trash2 size={14}/> إزالة</button></td></tr>)}</tbody></table></div>}
-        {tab==="messages"&&!loading&&<div className="table-wrap"><table className="table"><thead><tr><th>المرسل</th><th>المستلم</th><th>الرسالة</th><th>الإجراء</th></tr></thead><tbody>{messages.map(m=><tr key={m.id}><td>{m.sender_id}</td><td>{m.recipient_id}</td><td className="clip">{m.body||"وسائط"}</td><td><button className="small-btn danger-btn" onClick={()=>removeItem("messages",m)}><Trash2 size={14}/> إزالة</button></td></tr>)}</tbody></table></div>}
         {tab==="audit"&&!loading&&<div className="table-wrap"><table className="table"><thead><tr><th>الإجراء</th><th>النوع</th><th>المعرّف</th><th>السبب</th><th>التاريخ</th></tr></thead><tbody>{audit.map(a=><tr key={a.id}><td>{a.action}</td><td>{a.target_type}</td><td>{a.target_id}</td><td>{a.reason}</td><td>{String(a.created_at||"").slice(0,19).replace("T"," ")}</td></tr>)}</tbody></table></div>}
         {tab==="security"&&!loading&&<article className="panel"><h2>ضوابط الحماية</h2><div className="activity"><div className="activity-row"><span>التحقق من هوية المدير على الخادم</span><span className="tag blue">مفعّل</span></div><div className="activity-row"><span>ملف ارتباط الجلسة HttpOnly</span><span className="tag blue">مفعّل</span></div><div className="activity-row"><span>منع الوصول من الواجهة وحدها</span><span className="tag blue">مفعّل</span></div><div className="activity-row"><span>سبب إلزامي لإجراءات الإشراف</span><span className="tag blue">مفعّل</span></div><div className="activity-row"><span>سجل تدقيق للإجراءات الإدارية</span><span className="tag blue">مفعّل</span></div></div><div className="notice">لا توجد مفاتيح API في المتصفح. جميع عمليات الإدارة تمر عبر الخادم وتُرفض إذا لم تتطابق هوية المدير المصرح بها.</div></article>}
       </section>
