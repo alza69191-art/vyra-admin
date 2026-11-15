@@ -56,6 +56,7 @@ export default function Home() {
     } catch(err:any){setError(err.message||"تعذر تحميل البيانات");}
     finally{setLoading(false);}
   }
+  useEffect(()=>{let alive=true;fetch("/api/login",{cache:"no-store"}).then(r=>{if(r.ok&&alive)setLogged(true)}).catch(()=>undefined);return()=>{alive=false}},[]);
   useEffect(()=>{if(logged) void loadTab(tab);},[logged,tab]);
   useEffect(()=>{if(!logged||tab!=="support")return;const timer=setInterval(()=>{api("/api/support/tickets").then(setTickets).catch(()=>undefined);if(selectedTicket){api(`/api/support/tickets/${selectedTicket.id}/messages`).then(setTicketMessages).catch(()=>undefined)}},12000);return()=>clearInterval(timer)},[logged,tab,selectedTicket?.id]);
   async function changeTab(id:string){setTab(id);setSelectedTicket(null);}
