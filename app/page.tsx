@@ -14,7 +14,7 @@ const menu = [
 type Row = Record<string, any>;
 
 export default function Home() {
-  const [email,setEmail]=useState("alza69191@gmail.com");
+  const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
@@ -48,7 +48,7 @@ export default function Home() {
     setLoading(true);setError("");setNotice("");
     try {
       if(id==="overview") setOverview(await api("/api/admin/overview"));
-      if(id==="support") setTickets(await api("/api/support"));
+      if(id==="support") setTickets(await api("/api/support/tickets"));
       if(id==="users") setUsers(await api("/api/admin/users"));
       if(id==="content") setPosts(await api("/api/admin/posts"));
       if(id==="messages") setMessages(await api("/api/admin/messages"));
@@ -61,19 +61,19 @@ export default function Home() {
   async function logout(){await fetch("/api/logout",{method:"POST"});setLogged(false);setTab("overview");}
   async function openTicket(t:Row){
     setSelectedTicket(t);setError("");
-    try{setTicketMessages(await api(`/api/support/${t.id}/messages`));}
+    try{setTicketMessages(await api(`/api/support/tickets/${t.id}/messages`));}
     catch(err:any){setError(err.message);}
   }
   async function sendReply(){
     if(!selectedTicket||!reply.trim())return;
     try{
-      await api(`/api/support/${selectedTicket.id}/messages`,"POST",{message:reply.trim()});
-      setReply("");setTicketMessages(await api(`/api/support/${selectedTicket.id}/messages`));
+      await api(`/api/support/tickets/${selectedTicket.id}/messages`,"POST",{message:reply.trim()});
+      setReply("");setTicketMessages(await api(`/api/support/tickets/${selectedTicket.id}/messages`));
       setNotice("تم إرسال الرد.");
     }catch(err:any){setError(err.message);}
   }
   async function ticketStatus(t:Row,status:string){
-    try{await api(`/api/support/${t.id}/status?status=${status}`,"PATCH");setSelectedTicket({...t,status});await loadTab("support");setNotice("تم تحديث حالة التذكرة.");}
+    try{await api(`/api/support/tickets/${t.id}/status?status=${status}`,"PATCH");setSelectedTicket({...t,status});await loadTab("support");setNotice("تم تحديث حالة التذكرة.");}
     catch(err:any){setError(err.message);}
   }
   async function suspendUser(u:Row,is_active:boolean){
