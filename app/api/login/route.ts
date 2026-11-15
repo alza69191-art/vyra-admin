@@ -30,3 +30,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "تعذر الاتصال بخادم VYRA." }, { status: 502 });
   }
 }
+
+export async function GET() {
+  const jar = await cookies();
+  const token = jar.get("vyra_admin_session")?.value;
+  if (!token) return NextResponse.json({ authenticated: false }, { status: 401 });
+  try {
+    const upstream = await fetch(`${API}/api/admin/overview`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (upstream.ok) return NextResponse.json({ authenticated: true });
+  } catch {
+    return NextResponse.json({ authenticated: false, error: "تعذر التحقق من الجلسة." }, { status: 502 });
+  }
+  jar.set("vyra_admin_session", "", {
+    httpOnly: true, secure: process.env.NODE_ENV === "production",
+    sameSite: "strict", path: "/", maxAge: 0,
+  });
+  return NextResponse.json({ authenticated: false }, { status: 401 });
+}
