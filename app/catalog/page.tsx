@@ -56,7 +56,7 @@ export default function CatalogAdmin(){
       </div>
       <label style={{display:"block",marginTop:10}}>خصائص المنتج بصيغة JSON<textarea style={{...field,minHeight:90,fontFamily:"monospace"}} value={meta.attributes} onChange={e=>setMeta({...meta,attributes:e.target.value})}/></label>
       <label style={{display:"flex",alignItems:"center",gap:9,margin:"14px 0"}}><input type="checkbox" checked={meta.track_inventory} onChange={e=>setMeta({...meta,track_inventory:e.target.checked})}/> تفعيل تتبع المخزون</label>
-      <button disabled={!selected||busy} style={{...button,opacity:!selected?.5:1}}><Save size={16}/> حفظ بيانات المنتج</button>
+      <button disabled={!selected||busy} style={{...button,opacity:!selected ? 0.5 : 1}}><Save size={16}/> حفظ بيانات المنتج</button>
      </form>
      <form onSubmit={addBrand} style={{background:"#fff",border:"1px solid #e8ebf0",borderRadius:18,padding:20}}>
       <h2 style={{fontSize:18,marginTop:0}}>إضافة علامة تجارية</h2><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><label>الاسم<input required minLength={2} style={field} value={brand.name} onChange={e=>setBrand({...brand,name:e.target.value})}/></label><label>الرابط المختصر (slug)<input required pattern="[a-z0-9-]+" style={field} value={brand.slug} onChange={e=>setBrand({...brand,slug:e.target.value})}/></label></div><label style={{display:"block",marginTop:10}}>الوصف<input style={field} value={brand.description} onChange={e=>setBrand({...brand,description:e.target.value})}/></label><button style={{...button,marginTop:12}}><Plus size={16}/> إضافة العلامة</button>
