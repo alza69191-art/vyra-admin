@@ -107,7 +107,7 @@ export default function Home() {
     <aside className="sidebar">
       <div className="brand"><img className="brand-logo" src="/brand/vyra-logo.svg" alt="VYRA" /><span>VYRA ADMIN</span></div>
       <div><div className="side-label">مساحة الإدارة</div><nav className="nav">{menu.map(item=>{const Icon=item.icon;return <button key={item.id} className={tab===item.id?"active":""} onClick={()=>changeTab(item.id)}><Icon size={18}/><span>{item.label}</span></button>})}</nav></div>
-      <div><div className="side-label">النظام</div><nav className="nav"><button onClick={()=>changeTab("security")}><Settings size={18}/><span>الإعدادات والأمان</span></button><button onClick={logout}><LogOut size={18}/><span>تسجيل الخروج</span></button></nav></div>
+      <a href="/marketplace" style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",margin:"-16px 0 8px",borderRadius:11,background:"#ffffff12",color:"#fff",fontSize:13,textDecoration:"none"}}><span>🛍️</span><span>إدارة المتجر والنشر</span></a><div><div className="side-label">النظام</div><nav className="nav"><button onClick={()=>changeTab("security")}><Settings size={18}/><span>الإعدادات والأمان</span></button><button onClick={logout}><LogOut size={18}/><span>تسجيل الخروج</span></button></nav></div>
       <div className="side-foot">VYRA ADMIN · لوحة مستقلة<br/>صلاحيات مفروضة من الخادم</div>
     </aside>
     <main className="main">
