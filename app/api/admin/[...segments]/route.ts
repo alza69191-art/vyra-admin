@@ -28,5 +28,6 @@ async function forward(request: NextRequest, segments: string[], method: string)
 }
 type Context = { params: Promise<{ segments: string[] }> };
 export async function GET(request: NextRequest, context: Context) { return forward(request, (await context.params).segments, "GET"); }
+export async function POST(request: NextRequest, context: Context) { return forward(request, (await context.params).segments, "POST"); }
 export async function PATCH(request: NextRequest, context: Context) { return forward(request, (await context.params).segments, "PATCH"); }
 export async function DELETE(request: NextRequest, context: Context) { return forward(request, (await context.params).segments, "DELETE"); }
