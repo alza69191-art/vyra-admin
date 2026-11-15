@@ -54,6 +54,7 @@ export default function Home() {
     finally{setLoading(false);}
   }
   useEffect(()=>{if(logged) void loadTab(tab);},[logged,tab]);
+  useEffect(()=>{if(!logged||tab!=="support")return;const timer=setInterval(()=>{void loadTab("support");if(selectedTicket){api(`/api/support/tickets/${selectedTicket.id}/messages`).then(setTicketMessages).catch(()=>undefined)}},10000);return()=>clearInterval(timer)},[logged,tab,selectedTicket?.id]);
   async function changeTab(id:string){setTab(id);setSelectedTicket(null);}
   async function logout(){await fetch("/api/logout",{method:"POST"});setLogged(false);setTab("overview");}
   async function openTicket(t:Row){
@@ -66,6 +67,7 @@ export default function Home() {
     try{
       await api(`/api/support/tickets/${selectedTicket.id}/messages`,"POST",{message:reply.trim()});
       setReply("");setTicketMessages(await api(`/api/support/tickets/${selectedTicket.id}/messages`));
+      await loadTab("support");
       setNotice("تم إرسال الرد.");
     }catch(err:any){setError(err.message);}
   }
